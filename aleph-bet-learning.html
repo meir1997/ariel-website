@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>לימוד אלף בית</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            direction: rtl;
+            overflow-x: hidden;
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64"><circle cx="32" cy="32" r="28" fill="%23FFD700" stroke="%23000" stroke-width="3"/><circle cx="32" cy="32" r="24" fill="%23FFED4E"/></svg>') 32 32, auto;
+        }
+
+        html {
+            direction: rtl;
+        }
+
+        @keyframes bounce-scale {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes slide-in {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .bounce-scale {
+            animation: bounce-scale 0.6s ease-in-out;
+        }
+
+        .slide-in {
+            animation: slide-in 0.5s ease-out;
+        }
+
+        .pulse-anim {
+            animation: pulse 1s ease-in-out infinite;
+        }
+
+        button {
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        canvas {
+            touch-action: none;
+            -webkit-touch-callout: none;
+        }
+
+        .kids-pink { background-color: #FF6B9D; }
+        .kids-blue { background-color: #4A90E2; }
+        .kids-yellow { background-color: #FFD93D; }
+        .kids-green { background-color: #6BCB77; }
+        .kids-purple { background-color: #9D84B7; }
+        .kids-orange { background-color: #FF8C42; }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+
+    <script>
+        class AlephBetApp {
+            constructor() {
+                this.LETTERS = [
+                    { letter: 'א', name: 'אלף', sound: 'a', color: 'kids-pink' },
+                    { letter: 'ב', name: 'בית', sound: 'b', color: 'kids-blue' },
+                    { letter: 'ג', name: 'גימל', sound: 'g', color: 'kids-yellow' },
+                    { letter: 'ד', name: 'דלת', sound: 'd', color: 'kids-green' },
+                    { letter: 'ה', name: 'הה', sound: 'h', color: 'kids-purple' },
+                    { letter: 'ו', name: 'ו', sound: 'v', color: 'kids-orange' },
+                    { letter: 'ז', name: 'זיין', sound: 'z', color: 'kids-pink' },
+                    { letter: 'ח', name: 'חית', sound: 'ch', color: 'kids-blue' },
+                    { letter: 'ט', name: 'טית', sound: 't', color: 'kids-yellow' },
+                    { letter: 'י', name: 'יוד', sound: 'y', color: 'kids-green' },
+                    { letter: 'כ', name: 'כף', sound: 'k', color: 'kids-purple' },
+                    { letter: 'ל', name: 'למד', sound: 'l', color: 'kids-orange' },
+                    { letter: 'מ', name: 'מם', sound: 'm', color: 'kids-pink' },
+                    { letter: 'נ', name: 'נון', sound: 'n', color: 'kids-blue' },
+                    { letter: 'ס', name: 'סמך', sound: 's', color: 'kids-yellow' },
+                    { letter: 'ע', name: 'עין', sound: 'ah', color: 'kids-green' },
+                    { letter: 'פ', name: 'פה', sound: 'p', color: 'kids-purple' },
+                    { letter: 'צ', name: 'צדי', sound: 'tz', color: 'kids-orange' },
+                    { letter: 'ק', name: 'קוף', sound: 'k', color: 'kids-pink' },
+                    { letter: 'ר', name: 'ריש', sound: 'r', color: 'kids-blue' },
+                    { letter: 'ש', name: 'שין', sound: 'sh', color: 'kids-yellow' },
+                    { letter: 'ת', name: 'תיו', sound: 't', color: 'kids-green' },
+                ];
+
+                this.VOCABULARY = [
+                    { letter: 'א', animal: 'אריה', animalEmoji: '🦁', object: 'אהל', objectEmoji: '⛺' },
+                    { letter: 'ב', animal: 'ברווז', animalEmoji: '🦆', object: 'בלון', objectEmoji: '🎈' },
+                    { letter: 'ג', animal: 'גמל', animalEmoji: '🐪', object: 'גלגל', objectEmoji: '🎡' },
+                    { letter: 'ד', animal: 'דב', animalEmoji: '🐻', object: 'דלת', objectEmoji: '🚪' },
+                    { letter: 'ה', animal: 'הודו', animalEmoji: '🦃', object: 'הגה', objectEmoji: '🎡' },
+                    { letter: 'ו', animal: 'ויל', animalEmoji: '🐋', object: 'ווין', objectEmoji: '🎸' },
+                    { letter: 'ז', animal: 'זאב', animalEmoji: '🐺', object: 'זקן', objectEmoji: '🎭' },
+                    { letter: 'ח', animal: 'חתול', animalEmoji: '🐱', object: 'חלל', objectEmoji: '🪟' },
+                    { letter: 'ט', animal: 'טוקן', animalEmoji: '🦜', object: 'טבעת', objectEmoji: '💍' },
+                    { letter: 'י', animal: 'יונה', animalEmoji: '🕊️', object: 'יאכט', objectEmoji: '🛥️' },
+                    { letter: 'כ', animal: 'כבשה', animalEmoji: '🐑', object: 'כוס', objectEmoji: '🥤' },
+                    { letter: 'ל', animal: 'לביא', animalEmoji: '🦁', object: 'לב', objectEmoji: '❤️' },
+                    { letter: 'מ', animal: 'מעכברת', animalEmoji: '🐭', object: 'מטבח', objectEmoji: '🍳' },
+                    { letter: 'נ', animal: 'נץ', animalEmoji: '🦅', object: 'נר', objectEmoji: '🕯️' },
+                    { letter: 'ס', animal: 'סוס', animalEmoji: '🐴', object: 'סכום', objectEmoji: '🥄' },
+                    { letter: 'ע', animal: 'עוף', animalEmoji: '🐦', object: 'עציץ', objectEmoji: '🪴' },
+                    { letter: 'פ', animal: 'פיל', animalEmoji: '🐘', object: 'פעמון', objectEmoji: '🔔' },
+                    { letter: 'צ', animal: 'צפור', animalEmoji: '🐦', object: 'צלחת', objectEmoji: '🍽️' },
+                    { letter: 'ק', animal: 'קוף', animalEmoji: '🐵', object: 'קפה', objectEmoji: '☕' },
+                    { letter: 'ר', animal: 'ריקון', animalEmoji: '🦝', object: 'רכב', objectEmoji: '🚗' },
+                    { letter: 'ש', animal: 'שור', animalEmoji: '🐂', object: 'שעון', objectEmoji: '⏰' },
+                    { letter: 'ת', animal: 'תרנגול', animalEmoji: '🐓', object: 'תיבה', objectEmoji: '📦' },
+                ];
+
+                this.mode = 'menu';
+                this.currentLetterIndex = 0;
+                this.gameState = { matches: 0, total: 0, answers: [] };
+                this.message = '';
+                this.isDrawing = false;
+                this.canvas = null;
+                this.ctx = null;
+                this.currentGameLetters = [];
+
+                // Score tracking
+                this.loadScores();
+
+                this.render();
+            }
+
+            loadScores() {
+                const today = new Date().toISOString().split('T')[0];
+                const savedScores = localStorage.getItem('alphaScores');
+
+                if (savedScores) {
+                    this.scores = JSON.parse(savedScores);
+                    // Reset daily score if it's a new day
+                    if (this.scores.lastDate !== today) {
+                        this.scores.daily = 0;
+                        this.scores.lastDate = today;
+                    }
+                } else {
+                    this.scores = { daily: 0, total: 0, lastDate: today };
+                }
+            }
+
+            saveScores() {
+                localStorage.setItem('alphaScores', JSON.stringify(this.scores));
+            }
+
+            addScore(points) {
+                this.scores.daily += points;
+                this.scores.total += points;
+                this.saveScores();
+            }
+
+            playSound(sound) {
+                const utterance = new SpeechSynthesisUtterance(sound);
+                utterance.lang = 'he-IL';
+                utterance.rate = 0.8;
+                window.speechSynthesis.cancel();
+                window.speechSynthesis.speak(utterance);
+            }
+
+            startLearning() {
+                this.mode = 'learn';
+                this.currentLetterIndex = 0;
+                this.render();
+            }
+
+            startMatchGame() {
+                this.mode = 'match';
+
+                // Create array with each letter twice (animal and object)
+                let gameSequence = [];
+                for (let vocab of this.VOCABULARY) {
+                    gameSequence.push({ vocab, emojiIndex: 0 }); // animal
+                    gameSequence.push({ vocab, emojiIndex: 1 }); // object
+                }
+
+                // Shuffle but ensure no consecutive duplicates
+                gameSequence = this.shuffleNoDuplicates(gameSequence);
+
+                this.currentGameSequence = gameSequence;
+                this.currentGameIndex = 0;
+                this.gameState = { matches: 0, total: gameSequence.length, answers: [] };
+                this.messageEmoji = '';
+                this.earnedPoints = 0;
+                this.render();
+            }
+
+            shuffleNoDuplicates(array) {
+                let shuffled = [...array];
+                let hasConsecutiveDuplicate = true;
+
+                while (hasConsecutiveDuplicate) {
+                    shuffled = shuffled.sort(() => Math.random() - 0.5);
+                    hasConsecutiveDuplicate = false;
+
+                    for (let i = 0; i < shuffled.length - 1; i++) {
+                        if (shuffled[i].vocab.letter === shuffled[i + 1].vocab.letter) {
+                            hasConsecutiveDuplicate = true;
+                            break;
+                        }
+                    }
+                }
+
+                return shuffled;
+            }
+
+            startDrawing() {
+                this.mode = 'draw';
+                this.currentLetterIndex = 0;
+                this.render();
+                setTimeout(() => this.clearCanvas(), 100);
+            }
+
+            nextLetter() {
+                if (this.currentLetterIndex < this.LETTERS.length - 1) {
+                    this.currentLetterIndex++;
+                    this.render();
+                } else {
+                    this.message = 'כל הכבוד! למדת את כל האותיות! 🎉';
+                    this.render();
+                    setTimeout(() => {
+                        this.mode = 'menu';
+                        this.render();
+                    }, 2000);
+                }
+            }
+
+            previousLetter() {
+                if (this.currentLetterIndex > 0) {
+                    this.currentLetterIndex--;
+                    this.render();
+                }
+            }
+
+            clearCanvas() {
+                if (this.canvas) {
+                    const ctx = this.canvas.getContext('2d');
+                    if (ctx) {
+                        ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                    }
+                }
+            }
+
+            renderMenu() {
+                return `
+                    <div class="min-h-screen bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 flex items-center justify-center p-4">
+                        <div class="w-full max-w-md">
+                            <div class="text-center mb-8 slide-in">
+                                <h1 class="text-5xl font-bold text-white mb-2">🎉 אלף בית</h1>
+                                <p class="text-2xl text-white">לימוד אותיות בכיף!</p>
+
+                                <div class="mt-4 bg-white bg-opacity-30 p-3 rounded-2xl">
+                                    <p class="text-white text-lg">🌟 היום: <span class="font-bold text-yellow-200">${this.scores.daily}</span> | 🏆 כללי: <span class="font-bold text-yellow-200">${this.scores.total}</span></p>
+                                </div>
+                            </div>
+
+                            <div class="space-y-4">
+                                <button onclick="app.startLearning()" class="w-full bg-red-400 text-white text-2xl font-bold py-6 px-8 rounded-3xl hover:shadow-lg transform hover:scale-105 transition-all duration-200">📚 למד אותיות</button>
+                                <button onclick="app.startMatchGame()" class="w-full bg-blue-500 text-white text-2xl font-bold py-6 px-8 rounded-3xl hover:shadow-lg transform hover:scale-105 transition-all duration-200">🎮 משחק התאמה</button>
+                                <button onclick="app.startDrawing()" class="w-full bg-yellow-500 text-white text-2xl font-bold py-6 px-8 rounded-3xl hover:shadow-lg transform hover:scale-105 transition-all duration-200">✏️ צייר ותרגל</button>
+                            </div>
+
+                            <div class="mt-8 bg-white bg-opacity-20 p-4 rounded-2xl">
+                                <p class="text-white text-lg">👋 שלום! בואו נלמד אותיות עברית ביחד!</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderLearn() {
+                const letter = this.LETTERS[this.currentLetterIndex];
+                const colorClass = letter.color;
+
+                return `
+                    <div class="min-h-screen bg-gradient-to-br from-green-300 via-blue-300 to-purple-300 flex items-center justify-center p-4">
+                        <div class="w-full max-w-md">
+                            <div class="mb-4 text-center">
+                                <button onclick="app.goToMenu()" class="text-3xl bg-white rounded-full w-12 h-12 flex items-center justify-center hover:bg-gray-200 transition">✕</button>
+                            </div>
+
+                            <div class="rounded-3xl p-8 shadow-2xl mb-6 slide-in" style="background: ${this.getColorBg(colorClass)};">
+                                <div class="text-center">
+                                    <div class="text-9xl font-bold text-white mb-4">${letter.letter}</div>
+                                    <p class="text-3xl text-white font-bold mb-2">${letter.name}</p>
+
+                                    <div class="flex gap-3 justify-center mt-6">
+                                        <button onclick="app.playSound('${letter.name}')" class="bg-white text-3xl rounded-full w-16 h-16 flex items-center justify-center hover:scale-110 transition-transform">🔤</button>
+                                        <button onclick="app.playSound('${letter.sound}')" class="bg-white text-3xl rounded-full w-16 h-16 flex items-center justify-center hover:scale-110 transition-transform">🔊</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <p class="text-center text-white text-lg mb-4">אות ${this.currentLetterIndex + 1} מתוך ${this.LETTERS.length}</p>
+
+                            <div class="flex gap-3">
+                                <button onclick="app.previousLetter()" ${this.currentLetterIndex === 0 ? 'disabled' : ''} class="flex-1 bg-white text-2xl font-bold py-4 px-6 rounded-2xl disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition">←</button>
+                                <button onclick="app.nextLetter()" class="flex-1 bg-white text-2xl font-bold py-4 px-6 rounded-2xl hover:scale-105 transition">→</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            getColorBg(colorClass) {
+                const colors = {
+                    'kids-pink': '#FF6B9D',
+                    'kids-blue': '#4A90E2',
+                    'kids-yellow': '#FFD93D',
+                    'kids-green': '#6BCB77',
+                    'kids-purple': '#9D84B7',
+                    'kids-orange': '#FF8C42',
+                };
+                return colors[colorClass] || '#FF6B9D';
+            }
+
+            getColorBgLight(colorClass) {
+                const colors = {
+                    'kids-pink': '#FFB3D9',
+                    'kids-blue': '#B3D9FF',
+                    'kids-yellow': '#FFFFB3',
+                    'kids-green': '#B3FFB3',
+                    'kids-purple': '#D9B3FF',
+                    'kids-orange': '#FFD9B3',
+                };
+                return colors[colorClass] || '#FFB3D9';
+            }
+
+            renderMatch() {
+                const currentItem = this.currentGameSequence[this.currentGameIndex];
+                const currentVocab = currentItem.vocab;
+                const currentEmoji = currentItem.emojiIndex === 0 ? currentVocab.animalEmoji : currentVocab.objectEmoji;
+                const currentWord = currentItem.emojiIndex === 0 ? currentVocab.animal : currentVocab.object;
+                const correctLetter = currentVocab.letter;
+
+                // Get all unique letters
+                const allLetters = [...new Set(this.VOCABULARY.map(v => v.letter))];
+
+                // Start with the correct letter
+                let buttonLetters = [correctLetter];
+
+                // Add 5 more random different letters (excluding the correct one)
+                const otherLetters = allLetters.filter(l => l !== correctLetter);
+                const randomOthers = otherLetters.sort(() => Math.random() - 0.5).slice(0, 5);
+                buttonLetters = buttonLetters.concat(randomOthers);
+
+                // Shuffle all button letters
+                buttonLetters = buttonLetters.sort(() => Math.random() - 0.5);
+
+                const buttons = buttonLetters.map((letter) => {
+                    const letterData = this.LETTERS.find(l => l.letter === letter);
+                    return `
+                        <button onclick="app.handleMatch('${letter}')" style="background: ${this.getColorBgLight(letterData.color)}; border: 4px solid ${this.getColorBg(letterData.color)};" class="text-6xl font-bold py-8 rounded-2xl hover:scale-110 transition-transform duration-200 transform hover:shadow-lg">${letter}</button>
+                    `;
+                }).join('');
+
+                return `
+                    <div class="min-h-screen bg-gradient-to-br from-yellow-300 via-orange-300 to-pink-300 flex items-center justify-center p-4">
+                        <div class="w-full max-w-md">
+                            <div class="text-center mb-6">
+                                <button onclick="app.goToMenu()" class="text-4xl bg-white rounded-full w-14 h-14 flex items-center justify-center hover:bg-gray-200 transition mb-4">✕</button>
+                            </div>
+
+                            <div class="bg-white rounded-2xl p-6 shadow-xl">
+                                <p class="text-center text-2xl font-bold text-gray-800 mb-4">בחר את האות הנכונה:</p>
+                                <div class="text-center mb-6">
+                                    <p class="text-9xl font-bold py-4 animate-bounce">${currentEmoji}</p>
+                                    <div class="flex items-center justify-center gap-3">
+                                        <p class="text-4xl font-bold text-blue-600">${currentWord}</p>
+                                        <button onclick="app.playSound('${currentWord}')" class="text-3xl bg-blue-100 hover:bg-blue-200 border-2 border-blue-500 rounded-full w-12 h-12 flex items-center justify-center transition">🔊</button>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-3">
+                                    ${buttons}
+                                </div>
+
+                                ${this.messageEmoji ? `<p class="text-center text-5xl mt-6 font-bold bounce-scale">${this.messageEmoji}</p>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            handleMatch(letter) {
+                const correctLetter = this.currentGameSequence[this.currentGameIndex].vocab.letter;
+
+                if (letter === correctLetter) {
+                    this.gameState.matches++;
+                    this.earnedPoints += 10;
+                    this.messageEmoji = '✨';
+                    this.render();
+                    setTimeout(() => {
+                        this.messageEmoji = '';
+                        if (this.gameState.matches < this.gameState.total) {
+                            this.currentGameIndex++;
+                            this.render();
+                        } else {
+                            // Game complete - award points and show celebration
+                            this.addScore(this.earnedPoints);
+                            this.mode = 'matchComplete';
+                            this.render();
+                        }
+                    }, 1000);
+                } else {
+                    this.messageEmoji = '🔄';
+                    this.render();
+                    setTimeout(() => {
+                        this.messageEmoji = '';
+                        this.render();
+                    }, 800);
+                }
+            }
+
+            renderDraw() {
+                const letter = this.LETTERS[this.currentLetterIndex];
+
+                return `
+                    <div class="min-h-screen bg-gradient-to-br from-red-300 via-pink-300 to-purple-300 flex items-center justify-center p-4">
+                        <div class="w-full max-w-md">
+                            <div class="text-center mb-4">
+                                <button onclick="app.goToMenu()" class="text-3xl bg-white rounded-full w-12 h-12 flex items-center justify-center hover:bg-gray-200 transition">✕</button>
+                            </div>
+
+                            <div class="bg-white rounded-2xl p-6 shadow-2xl">
+                                <h2 class="text-3xl font-bold text-center text-gray-800 mb-4">✏️ צייר את האות:</h2>
+                                <p class="text-4xl font-bold text-center text-blue-500 mb-6">${letter.letter}</p>
+                                <p class="text-lg text-center text-gray-600 mb-4">${letter.name}</p>
+
+                                <canvas id="drawCanvas" width="280" height="280" class="border-4 border-blue-500 rounded-xl w-full bg-gray-50 mb-4"></canvas>
+
+                                <div class="flex gap-3">
+                                    <button onclick="app.clearCanvas()" class="flex-1 bg-red-400 text-white text-lg font-bold py-3 rounded-xl hover:scale-105 transition">🗑️ מחק</button>
+                                    <button onclick="app.nextLetter()" class="flex-1 bg-green-500 text-white text-lg font-bold py-3 rounded-xl hover:scale-105 transition">➜ הבא</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderMatchComplete() {
+                return `
+                    <div class="min-h-screen bg-gradient-to-br from-purple-400 via-pink-400 to-yellow-400 flex items-center justify-center p-4">
+                        <div class="w-full max-w-md">
+                            <div class="bg-white rounded-3xl p-8 shadow-2xl text-center slide-in">
+                                <p class="text-9xl mb-4 animate-bounce">🎉</p>
+                                <h1 class="text-4xl font-bold text-gray-800 mb-2">כל הכבוד!</h1>
+                                <p class="text-2xl text-gray-700 mb-6">סיימת את המשחק בהצלחה!</p>
+
+                                <div class="bg-gradient-to-r from-yellow-300 to-orange-300 rounded-2xl p-6 mb-6">
+                                    <p class="text-lg text-gray-700 mb-2">נקודות שהרווחת:</p>
+                                    <p class="text-6xl font-bold text-white">${this.earnedPoints}</p>
+                                    <p class="text-sm text-gray-700 mt-2">⭐ ${this.earnedPoints / 10} התאמות נכונות!</p>
+                                </div>
+
+                                <div class="bg-blue-100 rounded-2xl p-4 mb-6">
+                                    <p class="text-gray-700 text-lg">📊 ניקוד כולל:</p>
+                                    <p class="text-4xl font-bold text-blue-600">🏆 ${this.scores.total}</p>
+                                </div>
+
+                                <button onclick="app.goToMenu()" class="w-full bg-green-500 text-white text-2xl font-bold py-4 px-8 rounded-2xl hover:scale-105 transition-transform duration-200">🏠 חזור לבית</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            goToMenu() {
+                this.mode = 'menu';
+                this.render();
+            }
+
+            render() {
+                const app = document.getElementById('app');
+                if (!app) return;
+
+                let html = '';
+                if (this.mode === 'menu') {
+                    html = this.renderMenu();
+                } else if (this.mode === 'learn') {
+                    html = this.renderLearn();
+                } else if (this.mode === 'match') {
+                    html = this.renderMatch();
+                } else if (this.mode === 'matchComplete') {
+                    html = this.renderMatchComplete();
+                } else if (this.mode === 'draw') {
+                    html = this.renderDraw();
+                }
+
+                app.innerHTML = html;
+
+                if (this.mode === 'draw') {
+                    setTimeout(() => {
+                        this.canvas = document.getElementById('drawCanvas');
+                        if (this.canvas) {
+                            this.ctx = this.canvas.getContext('2d');
+                            this.canvas.addEventListener('mousedown', (e) => this.startDrawing_(e));
+                            this.canvas.addEventListener('mousemove', (e) => this.draw_(e));
+                            this.canvas.addEventListener('mouseup', () => this.stopDrawing_());
+                            this.canvas.addEventListener('mouseleave', () => this.stopDrawing_());
+                        }
+                    }, 100);
+                }
+            }
+
+            startDrawing_(e) {
+                if (!this.canvas) return;
+                const rect = this.canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                this.ctx.beginPath();
+                this.ctx.moveTo(x, y);
+                this.isDrawing = true;
+            }
+
+            draw_(e) {
+                if (!this.isDrawing) return;
+                const rect = this.canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                this.ctx.lineTo(x, y);
+                this.ctx.strokeStyle = '#4A90E2';
+                this.ctx.lineWidth = 5;
+                this.ctx.lineCap = 'round';
+                this.ctx.lineJoin = 'round';
+                this.ctx.stroke();
+            }
+
+            stopDrawing_() {
+                this.isDrawing = false;
+            }
+        }
+
+        const app = new AlephBetApp();
+    </script>
+</body>
+</html>
