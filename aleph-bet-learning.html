@@ -364,6 +364,145 @@
                 `;
             }
 
+            startMemoryGame() {
+                this.mode = 'memory';
+
+                // Pick 6 random letters and make pairs
+                const pairsCount = 6;
+                const chosen = [...this.LETTERS].sort(() => Math.random() - 0.5).slice(0, pairsCount);
+
+                let cards = [];
+                chosen.forEach((letterData) => {
+                    cards.push({ letter: letterData.letter, color: letterData.color, flipped: false, matched: false });
+                    cards.push({ letter: letterData.letter, color: letterData.color, flipped: false, matched: false });
+                });
+                cards = cards.sort(() => Math.random() - 0.5);
+
+                this.memoryCards = cards;
+                this.memoryFirstIndex = null;
+                this.memoryLock = false;
+                this.memoryMoves = 0;
+                this.memoryMatched = 0;
+                this.memoryEarnedPoints = 0;
+                this.render();
+            }
+
+            handleMemoryFlip(index) {
+                if (this.memoryLock) return;
+                const card = this.memoryCards[index];
+                if (card.flipped || card.matched) return;
+
+                card.flipped = true;
+
+                if (this.memoryFirstIndex === null) {
+                    // First card of the pair
+                    this.memoryFirstIndex = index;
+                    this.playSound(card.letter);
+                    this.render();
+                    return;
+                }
+
+                // Second card of the pair
+                this.memoryMoves++;
+                const first = this.memoryCards[this.memoryFirstIndex];
+                this.playSound(card.letter);
+                this.render();
+
+                if (first.letter === card.letter) {
+                    // Match!
+                    this.memoryLock = true;
+                    setTimeout(() => {
+                        first.matched = true;
+                        card.matched = true;
+                        this.memoryFirstIndex = null;
+                        this.memoryLock = false;
+                        this.memoryMatched++;
+                        this.memoryEarnedPoints += 10;
+
+                        if (this.memoryMatched >= this.memoryCards.length / 2) {
+                            this.addScore(this.memoryEarnedPoints);
+                            this.earnedPoints = this.memoryEarnedPoints;
+                            this.mode = 'memoryComplete';
+                        }
+                        this.render();
+                    }, 600);
+                } else {
+                    // No match - flip both back after a short delay
+                    this.memoryLock = true;
+                    setTimeout(() => {
+                        first.flipped = false;
+                        card.flipped = false;
+                        this.memoryFirstIndex = null;
+                        this.memoryLock = false;
+                        this.render();
+                    }, 1000);
+                }
+            }
+
+            renderMemory() {
+                const cards = this.memoryCards.map((card, i) => {
+                    if (card.flipped || card.matched) {
+                        const opacity = card.matched ? 'opacity-60' : '';
+                        return `
+                            <button onclick="app.handleMemoryFlip(${i})" style="background: ${this.getColorBg(card.color)};" class="aspect-square rounded-2xl text-5xl sm:text-6xl font-bold text-white flex items-center justify-center shadow-md bounce-scale ${opacity}">${card.letter}</button>
+                        `;
+                    }
+                    return `
+                        <button onclick="app.handleMemoryFlip(${i})" class="aspect-square rounded-2xl text-4xl sm:text-5xl font-bold text-white flex items-center justify-center shadow-md bg-gradient-to-br from-indigo-400 to-purple-500 hover:scale-105 transition-transform">❓</button>
+                    `;
+                }).join('');
+
+                return `
+                    <div class="min-h-screen bg-gradient-to-br from-indigo-300 via-purple-300 to-pink-300 flex items-center justify-center p-4">
+                        <div class="w-full max-w-md">
+                            <div class="text-center mb-4">
+                                <button onclick="app.goToMenu()" class="text-4xl bg-white rounded-full w-14 h-14 flex items-center justify-center hover:bg-gray-200 transition">✕</button>
+                            </div>
+
+                            <div class="bg-white rounded-2xl p-5 shadow-xl">
+                                <p class="text-center text-2xl font-bold text-gray-800 mb-1">🧠 משחק זיכרון</p>
+                                <p class="text-center text-base text-gray-600 mb-1">מצא את זוגות האותיות!</p>
+                                <p class="text-center text-sm text-gray-500 mb-4">זוגות: ${this.memoryMatched} / ${this.memoryCards.length / 2} | מהלכים: ${this.memoryMoves}</p>
+
+                                <div class="grid grid-cols-4 gap-2 sm:gap-3">
+                                    ${cards}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderMemoryComplete() {
+                return `
+                    <div class="min-h-screen bg-gradient-to-br from-purple-400 via-indigo-400 to-pink-400 flex items-center justify-center p-4">
+                        <div class="w-full max-w-md">
+                            <div class="bg-white rounded-3xl p-8 shadow-2xl text-center slide-in">
+                                <p class="text-9xl mb-4 animate-bounce">🎉</p>
+                                <h1 class="text-4xl font-bold text-gray-800 mb-2">כל הכבוד!</h1>
+                                <p class="text-2xl text-gray-700 mb-6">מצאת את כל הזוגות!</p>
+
+                                <div class="bg-gradient-to-r from-indigo-300 to-purple-300 rounded-2xl p-6 mb-6">
+                                    <p class="text-lg text-gray-700 mb-2">נקודות שהרווחת:</p>
+                                    <p class="text-6xl font-bold text-white">${this.earnedPoints}</p>
+                                    <p class="text-sm text-gray-700 mt-2">🧠 ב-${this.memoryMoves} מהלכים</p>
+                                </div>
+
+                                <div class="bg-blue-100 rounded-2xl p-4 mb-6">
+                                    <p class="text-gray-700 text-lg">📊 ניקוד כולל:</p>
+                                    <p class="text-4xl font-bold text-blue-600">🏆 ${this.scores.total}</p>
+                                </div>
+
+                                <div class="flex gap-3">
+                                    <button onclick="app.startMemoryGame()" class="flex-1 bg-purple-500 text-white text-xl font-bold py-4 rounded-2xl hover:scale-105 transition-transform duration-200">🔄 עוד פעם</button>
+                                    <button onclick="app.goToMenu()" class="flex-1 bg-blue-500 text-white text-xl font-bold py-4 rounded-2xl hover:scale-105 transition-transform duration-200">🏠 לבית</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
             startDrawing() {
                 this.mode = 'draw';
                 this.currentLetterIndex = 0;
@@ -418,6 +557,7 @@
                                 <button onclick="app.startLearning()" class="w-full bg-red-400 text-white text-2xl font-bold py-6 px-8 rounded-3xl hover:shadow-lg transform hover:scale-105 transition-all duration-200">📚 למד אותיות</button>
                                 <button onclick="app.startMatchGame()" class="w-full bg-blue-500 text-white text-2xl font-bold py-6 px-8 rounded-3xl hover:shadow-lg transform hover:scale-105 transition-all duration-200">🎮 משחק התאמה</button>
                                 <button onclick="app.startSortGame()" class="w-full bg-green-500 text-white text-2xl font-bold py-6 px-8 rounded-3xl hover:shadow-lg transform hover:scale-105 transition-all duration-200">🔢 סדר את האותיות</button>
+                                <button onclick="app.startMemoryGame()" class="w-full bg-purple-500 text-white text-2xl font-bold py-6 px-8 rounded-3xl hover:shadow-lg transform hover:scale-105 transition-all duration-200">🧠 משחק זיכרון</button>
                                 <button onclick="app.startDrawing()" class="w-full bg-yellow-500 text-white text-2xl font-bold py-6 px-8 rounded-3xl hover:shadow-lg transform hover:scale-105 transition-all duration-200">✏️ צייר ותרגל</button>
                             </div>
 
@@ -649,6 +789,10 @@
                     html = this.renderSort();
                 } else if (this.mode === 'sortComplete') {
                     html = this.renderSortComplete();
+                } else if (this.mode === 'memory') {
+                    html = this.renderMemory();
+                } else if (this.mode === 'memoryComplete') {
+                    html = this.renderMemoryComplete();
                 } else if (this.mode === 'draw') {
                     html = this.renderDraw();
                 }
