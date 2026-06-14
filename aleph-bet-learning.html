@@ -364,11 +364,40 @@
                 `;
             }
 
-            startMemoryGame() {
+            openMemoryLevels() {
+                this.mode = 'memoryLevels';
+                this.render();
+            }
+
+            renderMemoryLevels() {
+                return `
+                    <div class="min-h-screen bg-gradient-to-br from-indigo-300 via-purple-300 to-pink-300 flex items-center justify-center p-4">
+                        <div class="w-full max-w-md">
+                            <div class="text-center mb-4">
+                                <button onclick="app.goToMenu()" class="text-4xl bg-white rounded-full w-14 h-14 flex items-center justify-center hover:bg-gray-200 transition">✕</button>
+                            </div>
+
+                            <div class="bg-white rounded-3xl p-6 shadow-xl">
+                                <p class="text-center text-3xl font-bold text-gray-800 mb-2">🧠 משחק זיכרון</p>
+                                <p class="text-center text-lg text-gray-600 mb-6">בחר רמת קושי:</p>
+
+                                <div class="space-y-4">
+                                    <button onclick="app.startMemoryGame(6)" class="w-full bg-green-500 text-white text-2xl font-bold py-5 rounded-2xl hover:scale-105 transition-transform">😀 קל<span class="block text-base font-normal">6 זוגות</span></button>
+                                    <button onclick="app.startMemoryGame(12)" class="w-full bg-orange-500 text-white text-2xl font-bold py-5 rounded-2xl hover:scale-105 transition-transform">🙂 בינוני<span class="block text-base font-normal">12 זוגות</span></button>
+                                    <button onclick="app.startMemoryGame(18)" class="w-full bg-red-500 text-white text-2xl font-bold py-5 rounded-2xl hover:scale-105 transition-transform">😎 קשה<span class="block text-base font-normal">18 זוגות</span></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            startMemoryGame(pairsCount) {
                 this.mode = 'memory';
 
-                // Pick 6 random letters and make pairs
-                const pairsCount = 6;
+                // Number of pairs (default to easy if not provided)
+                pairsCount = pairsCount || 6;
+                this.memoryPairs = pairsCount;
                 const chosen = [...this.LETTERS].sort(() => Math.random() - 0.5).slice(0, pairsCount);
 
                 let cards = [];
@@ -440,15 +469,25 @@
             }
 
             renderMemory() {
+                // Layout adapts to the number of pairs so all cards fit nicely
+                let cols, faceText, backText, gap, radius;
+                if (this.memoryPairs <= 6) {
+                    cols = 'grid-cols-4'; faceText = 'text-4xl sm:text-5xl'; backText = 'text-3xl sm:text-4xl'; gap = 'gap-2 sm:gap-3'; radius = 'rounded-2xl';
+                } else if (this.memoryPairs <= 12) {
+                    cols = 'grid-cols-6'; faceText = 'text-2xl sm:text-3xl'; backText = 'text-xl sm:text-2xl'; gap = 'gap-1.5 sm:gap-2'; radius = 'rounded-xl';
+                } else {
+                    cols = 'grid-cols-6'; faceText = 'text-xl sm:text-2xl'; backText = 'text-base sm:text-xl'; gap = 'gap-1 sm:gap-1.5'; radius = 'rounded-lg';
+                }
+
                 const cards = this.memoryCards.map((card, i) => {
                     if (card.flipped || card.matched) {
                         const opacity = card.matched ? 'opacity-60' : '';
                         return `
-                            <button onclick="app.handleMemoryFlip(${i})" style="background: ${this.getColorBg(card.color)};" class="aspect-square rounded-2xl text-5xl sm:text-6xl font-bold text-white flex items-center justify-center shadow-md bounce-scale ${opacity}">${card.letter}</button>
+                            <button onclick="app.handleMemoryFlip(${i})" style="background: ${this.getColorBg(card.color)};" class="aspect-square ${radius} ${faceText} font-bold text-white flex items-center justify-center shadow-md bounce-scale ${opacity}">${card.letter}</button>
                         `;
                     }
                     return `
-                        <button onclick="app.handleMemoryFlip(${i})" class="aspect-square rounded-2xl text-4xl sm:text-5xl font-bold text-white flex items-center justify-center shadow-md bg-gradient-to-br from-indigo-400 to-purple-500 hover:scale-105 transition-transform">❓</button>
+                        <button onclick="app.handleMemoryFlip(${i})" class="aspect-square ${radius} ${backText} font-bold text-white flex items-center justify-center shadow-md bg-gradient-to-br from-indigo-400 to-purple-500 hover:scale-105 transition-transform">❓</button>
                     `;
                 }).join('');
 
@@ -464,7 +503,7 @@
                                 <p class="text-center text-base text-gray-600 mb-1">מצא את זוגות האותיות!</p>
                                 <p class="text-center text-sm text-gray-500 mb-4">זוגות: ${this.memoryMatched} / ${this.memoryCards.length / 2} | מהלכים: ${this.memoryMoves}</p>
 
-                                <div class="grid grid-cols-4 gap-2 sm:gap-3">
+                                <div class="grid ${cols} ${gap}">
                                     ${cards}
                                 </div>
                             </div>
@@ -493,10 +532,11 @@
                                     <p class="text-4xl font-bold text-blue-600">🏆 ${this.scores.total}</p>
                                 </div>
 
-                                <div class="flex gap-3">
-                                    <button onclick="app.startMemoryGame()" class="flex-1 bg-purple-500 text-white text-xl font-bold py-4 rounded-2xl hover:scale-105 transition-transform duration-200">🔄 עוד פעם</button>
-                                    <button onclick="app.goToMenu()" class="flex-1 bg-blue-500 text-white text-xl font-bold py-4 rounded-2xl hover:scale-105 transition-transform duration-200">🏠 לבית</button>
+                                <div class="flex gap-3 mb-3">
+                                    <button onclick="app.startMemoryGame(${this.memoryPairs})" class="flex-1 bg-purple-500 text-white text-xl font-bold py-4 rounded-2xl hover:scale-105 transition-transform duration-200">🔄 עוד פעם</button>
+                                    <button onclick="app.openMemoryLevels()" class="flex-1 bg-indigo-400 text-white text-xl font-bold py-4 rounded-2xl hover:scale-105 transition-transform duration-200">🎚️ רמה אחרת</button>
                                 </div>
+                                <button onclick="app.goToMenu()" class="w-full bg-blue-500 text-white text-xl font-bold py-4 rounded-2xl hover:scale-105 transition-transform duration-200">🏠 לבית</button>
                             </div>
                         </div>
                     </div>
@@ -557,7 +597,7 @@
                                 <button onclick="app.startLearning()" class="w-full bg-red-400 text-white text-2xl font-bold py-6 px-8 rounded-3xl hover:shadow-lg transform hover:scale-105 transition-all duration-200">📚 למד אותיות</button>
                                 <button onclick="app.startMatchGame()" class="w-full bg-blue-500 text-white text-2xl font-bold py-6 px-8 rounded-3xl hover:shadow-lg transform hover:scale-105 transition-all duration-200">🎮 משחק התאמה</button>
                                 <button onclick="app.startSortGame()" class="w-full bg-green-500 text-white text-2xl font-bold py-6 px-8 rounded-3xl hover:shadow-lg transform hover:scale-105 transition-all duration-200">🔢 סדר את האותיות</button>
-                                <button onclick="app.startMemoryGame()" class="w-full bg-purple-500 text-white text-2xl font-bold py-6 px-8 rounded-3xl hover:shadow-lg transform hover:scale-105 transition-all duration-200">🧠 משחק זיכרון</button>
+                                <button onclick="app.openMemoryLevels()" class="w-full bg-purple-500 text-white text-2xl font-bold py-6 px-8 rounded-3xl hover:shadow-lg transform hover:scale-105 transition-all duration-200">🧠 משחק זיכרון</button>
                                 <button onclick="app.startDrawing()" class="w-full bg-yellow-500 text-white text-2xl font-bold py-6 px-8 rounded-3xl hover:shadow-lg transform hover:scale-105 transition-all duration-200">✏️ צייר ותרגל</button>
                             </div>
 
@@ -789,6 +829,8 @@
                     html = this.renderSort();
                 } else if (this.mode === 'sortComplete') {
                     html = this.renderSortComplete();
+                } else if (this.mode === 'memoryLevels') {
+                    html = this.renderMemoryLevels();
                 } else if (this.mode === 'memory') {
                     html = this.renderMemory();
                 } else if (this.mode === 'memoryComplete') {
