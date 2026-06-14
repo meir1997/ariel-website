@@ -227,6 +227,144 @@
                 return shuffled;
             }
 
+            startSortGame() {
+                this.mode = 'sort';
+
+                // Pick a random run of 4 consecutive letters from the alphabet
+                const runLength = 4;
+                const startIndex = Math.floor(Math.random() * (this.LETTERS.length - runLength + 1));
+                const run = this.LETTERS.slice(startIndex, startIndex + runLength);
+
+                // The correct order (by alphabet)
+                this.sortCorrect = run.map(l => l.letter);
+
+                // Shuffle the tiles, making sure they aren't already in order
+                let shuffled;
+                do {
+                    shuffled = [...run].sort(() => Math.random() - 0.5);
+                } while (shuffled.map(l => l.letter).join('') === this.sortCorrect.join(''));
+
+                this.sortTiles = shuffled;            // remaining tiles to pick from
+                this.sortPlaced = [];                 // letters placed in order so far
+                this.sortNextIndex = 0;               // index of the next correct letter
+                this.sortEarnedPoints = 0;
+                this.messageEmoji = '';
+                this.render();
+            }
+
+            handleSort(letter) {
+                const expected = this.sortCorrect[this.sortNextIndex];
+
+                if (letter === expected) {
+                    // Correct! Move tile to the placed row
+                    this.sortPlaced.push(letter);
+                    this.sortTiles = this.sortTiles.filter(t => t.letter !== letter);
+                    this.sortNextIndex++;
+                    this.sortEarnedPoints += 10;
+                    this.playSound(letter);
+
+                    if (this.sortNextIndex >= this.sortCorrect.length) {
+                        // Whole sequence done
+                        this.messageEmoji = '🎉';
+                        this.render();
+                        setTimeout(() => {
+                            this.addScore(this.sortEarnedPoints);
+                            this.earnedPoints = this.sortEarnedPoints;
+                            this.mode = 'sortComplete';
+                            this.render();
+                        }, 1000);
+                    } else {
+                        this.messageEmoji = '✨';
+                        this.render();
+                        setTimeout(() => {
+                            this.messageEmoji = '';
+                            this.render();
+                        }, 700);
+                    }
+                } else {
+                    // Wrong letter
+                    this.messageEmoji = '🔄';
+                    this.render();
+                    setTimeout(() => {
+                        this.messageEmoji = '';
+                        this.render();
+                    }, 800);
+                }
+            }
+
+            renderSort() {
+                // Tiles still to be picked
+                const tiles = this.sortTiles.map((letterData) => {
+                    return `
+                        <button onclick="app.handleSort('${letterData.letter}')" style="background: ${this.getColorBgLight(letterData.color)}; border: 4px solid ${this.getColorBg(letterData.color)};" class="text-6xl font-bold w-24 h-24 rounded-2xl hover:scale-110 transition-transform duration-200 transform hover:shadow-lg">${letterData.letter}</button>
+                    `;
+                }).join('');
+
+                // Slots showing the ordered row (placed + empty placeholders)
+                const slots = this.sortCorrect.map((letter, i) => {
+                    if (i < this.sortPlaced.length) {
+                        const letterData = this.LETTERS.find(l => l.letter === this.sortPlaced[i]);
+                        return `<div style="background: ${this.getColorBg(letterData.color)};" class="text-5xl font-bold text-white w-20 h-20 rounded-2xl flex items-center justify-center bounce-scale">${letter}</div>`;
+                    }
+                    const isNext = i === this.sortPlaced.length;
+                    return `<div class="text-4xl text-gray-300 w-20 h-20 rounded-2xl flex items-center justify-center border-4 border-dashed ${isNext ? 'border-green-500 pulse-anim' : 'border-gray-300'}">?</div>`;
+                }).join('');
+
+                return `
+                    <div class="min-h-screen bg-gradient-to-br from-green-300 via-teal-300 to-blue-300 flex items-center justify-center p-4">
+                        <div class="w-full max-w-md">
+                            <div class="text-center mb-6">
+                                <button onclick="app.goToMenu()" class="text-4xl bg-white rounded-full w-14 h-14 flex items-center justify-center hover:bg-gray-200 transition mb-4">✕</button>
+                            </div>
+
+                            <div class="bg-white rounded-2xl p-6 shadow-xl">
+                                <p class="text-center text-2xl font-bold text-gray-800 mb-2">סדר את האותיות לפי הסדר 🔢</p>
+                                <p class="text-center text-lg text-gray-600 mb-6">לחץ על האות הבאה בסדר האלף-בית</p>
+
+                                <div class="flex justify-center gap-2 mb-8" dir="rtl">
+                                    ${slots}
+                                </div>
+
+                                <div class="flex flex-wrap justify-center gap-3 mb-2" dir="rtl">
+                                    ${tiles}
+                                </div>
+
+                                ${this.messageEmoji ? `<p class="text-center text-5xl mt-6 font-bold bounce-scale">${this.messageEmoji}</p>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderSortComplete() {
+                return `
+                    <div class="min-h-screen bg-gradient-to-br from-teal-400 via-green-400 to-yellow-400 flex items-center justify-center p-4">
+                        <div class="w-full max-w-md">
+                            <div class="bg-white rounded-3xl p-8 shadow-2xl text-center slide-in">
+                                <p class="text-9xl mb-4 animate-bounce">🎉</p>
+                                <h1 class="text-4xl font-bold text-gray-800 mb-2">כל הכבוד!</h1>
+                                <p class="text-2xl text-gray-700 mb-6">סידרת את האותיות בהצלחה!</p>
+
+                                <div class="bg-gradient-to-r from-green-300 to-teal-300 rounded-2xl p-6 mb-6">
+                                    <p class="text-lg text-gray-700 mb-2">נקודות שהרווחת:</p>
+                                    <p class="text-6xl font-bold text-white">${this.earnedPoints}</p>
+                                </div>
+
+                                <div class="bg-blue-100 rounded-2xl p-4 mb-6">
+                                    <p class="text-gray-700 text-lg">📊 ניקוד כולל:</p>
+                                    <p class="text-4xl font-bold text-blue-600">🏆 ${this.scores.total}</p>
+                                </div>
+
+                                <div class="flex gap-3">
+                                    <button onclick="app.startSortGame()" class="flex-1 bg-green-500 text-white text-xl font-bold py-4 rounded-2xl hover:scale-105 transition-transform duration-200">🔄 עוד פעם</button>
+                                    <button onclick="app.goToMenu()" class="flex-1 bg-blue-500 text-white text-xl font-bold py-4 rounded-2xl hover:scale-105 transition-transform duration-200">🏠 לבית</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
             startDrawing() {
                 this.mode = 'draw';
                 this.currentLetterIndex = 0;
@@ -280,6 +418,7 @@
                             <div class="space-y-4">
                                 <button onclick="app.startLearning()" class="w-full bg-red-400 text-white text-2xl font-bold py-6 px-8 rounded-3xl hover:shadow-lg transform hover:scale-105 transition-all duration-200">📚 למד אותיות</button>
                                 <button onclick="app.startMatchGame()" class="w-full bg-blue-500 text-white text-2xl font-bold py-6 px-8 rounded-3xl hover:shadow-lg transform hover:scale-105 transition-all duration-200">🎮 משחק התאמה</button>
+                                <button onclick="app.startSortGame()" class="w-full bg-green-500 text-white text-2xl font-bold py-6 px-8 rounded-3xl hover:shadow-lg transform hover:scale-105 transition-all duration-200">🔢 סדר את האותיות</button>
                                 <button onclick="app.startDrawing()" class="w-full bg-yellow-500 text-white text-2xl font-bold py-6 px-8 rounded-3xl hover:shadow-lg transform hover:scale-105 transition-all duration-200">✏️ צייר ותרגל</button>
                             </div>
 
@@ -507,6 +646,10 @@
                     html = this.renderMatch();
                 } else if (this.mode === 'matchComplete') {
                     html = this.renderMatchComplete();
+                } else if (this.mode === 'sort') {
+                    html = this.renderSort();
+                } else if (this.mode === 'sortComplete') {
+                    html = this.renderSortComplete();
                 } else if (this.mode === 'draw') {
                     html = this.renderDraw();
                 }
