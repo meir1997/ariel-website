@@ -787,13 +787,10 @@
 
                             <div class="bg-white rounded-2xl p-6 shadow-xl">
                                 <p class="text-center text-lg text-gray-600 mb-2">מילה ${this.currentGameIndex + 1} מתוך ${this.gameState.total}</p>
-                                <h1 class="text-center text-2xl font-bold text-gray-800 mb-4">מה האות הראשונה במילה?</h1>
+                                <h1 class="text-center text-2xl font-bold text-gray-800 mb-4">באיזו אות מתחילה המילה שבתמונה?</h1>
                                 <div class="text-center mb-5">
                                     <img src="images/match/${currentItem.image}.webp" alt="${currentItem.word}" width="500" height="333" class="w-full h-48 sm:h-56 object-contain rounded-2xl bg-gray-50 mb-3" loading="eager">
-                                    <div class="flex items-center justify-center gap-3">
-                                        <p class="text-4xl font-bold text-blue-700">${currentItem.word}</p>
-                                        <button onclick="app.playSound('${currentItem.word}')" aria-label="השמע ${currentItem.word}" class="text-3xl bg-blue-100 hover:bg-blue-200 border-2 border-blue-500 rounded-full w-12 h-12 flex items-center justify-center transition">🔊</button>
-                                    </div>
+                                    <button onclick="app.playSound('${currentItem.word}')" aria-label="השמע את המילה שבתמונה" class="bg-blue-100 hover:bg-blue-200 border-2 border-blue-500 rounded-2xl px-5 py-2 text-lg font-bold transition">🔊 השמע את המילה</button>
                                 </div>
 
                                 <div class="grid grid-cols-3 gap-3">
