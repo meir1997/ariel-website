@@ -107,32 +107,43 @@
                     { letter: 'ת', name: 'תיו', sound: 't', color: 'kids-green' },
                 ];
 
-                this.VOCABULARY = [
-                    { letter: 'א', animal: 'אריה', animalEmoji: '🦁', object: 'אהל', objectEmoji: '⛺' },
-                    { letter: 'ב', animal: 'ברווז', animalEmoji: '🦆', object: 'בלון', objectEmoji: '🎈' },
-                    { letter: 'ג', animal: 'גמל', animalEmoji: '🐪', object: 'גלגל', objectEmoji: '🎡' },
-                    { letter: 'ד', animal: 'דב', animalEmoji: '🐻', object: 'דלת', objectEmoji: '🚪' },
-                    { letter: 'ה', animal: 'הודו', animalEmoji: '🦃', object: 'הגה', objectEmoji: '🎡' },
-                    { letter: 'ו', animal: 'ויל', animalEmoji: '🐋', object: 'ווין', objectEmoji: '🎸' },
-                    { letter: 'ז', animal: 'זאב', animalEmoji: '🐺', object: 'זקן', objectEmoji: '🎭' },
-                    { letter: 'ח', animal: 'חתול', animalEmoji: '🐱', object: 'חלל', objectEmoji: '🪟' },
-                    { letter: 'ט', animal: 'טוקן', animalEmoji: '🦜', object: 'טבעת', objectEmoji: '💍' },
-                    { letter: 'י', animal: 'יונה', animalEmoji: '🕊️', object: 'יאכט', objectEmoji: '🛥️' },
-                    { letter: 'כ', animal: 'כבשה', animalEmoji: '🐑', object: 'כוס', objectEmoji: '🥤' },
-                    { letter: 'ל', animal: 'לביא', animalEmoji: '🦁', object: 'לב', objectEmoji: '❤️' },
-                    { letter: 'מ', animal: 'מעכברת', animalEmoji: '🐭', object: 'מטבח', objectEmoji: '🍳' },
-                    { letter: 'נ', animal: 'נץ', animalEmoji: '🦅', object: 'נר', objectEmoji: '🕯️' },
-                    { letter: 'ס', animal: 'סוס', animalEmoji: '🐴', object: 'סכום', objectEmoji: '🥄' },
-                    { letter: 'ע', animal: 'עוף', animalEmoji: '🐦', object: 'עציץ', objectEmoji: '🪴' },
-                    { letter: 'פ', animal: 'פיל', animalEmoji: '🐘', object: 'פעמון', objectEmoji: '🔔' },
-                    { letter: 'צ', animal: 'צפור', animalEmoji: '🐦', object: 'צלחת', objectEmoji: '🍽️' },
-                    { letter: 'ק', animal: 'קוף', animalEmoji: '🐵', object: 'קפה', objectEmoji: '☕' },
-                    { letter: 'ר', animal: 'ריקון', animalEmoji: '🦝', object: 'רכב', objectEmoji: '🚗' },
-                    { letter: 'ש', animal: 'שור', animalEmoji: '🐂', object: 'שעון', objectEmoji: '⏰' },
-                    { letter: 'ת', animal: 'תרנגול', animalEmoji: '🐓', object: 'תיבה', objectEmoji: '📦' },
+                this.NIKUD_MARKS = [
+                    { name: 'קמץ', mark: '\u05B8' },
+                    { name: 'פתח', mark: '\u05B7' },
+                    { name: 'צירי', mark: '\u05B5' },
+                    { name: 'סגול', mark: '\u05B6' },
+                    { name: 'חיריק', mark: '\u05B4' },
+                    { name: 'חולם', mark: '\u05B9' },
+                    { name: 'קובוץ', mark: '\u05BB' },
+                    { name: 'שווא', mark: '\u05B0' },
                 ];
 
-                this.mode = 'menu';
+                this.MATCH_ITEMS = [
+                    { word: 'אריה', letter: 'א', image: 'lion' },
+                    { word: 'ברווז', letter: 'ב', image: 'duck' },
+                    { word: 'גמל', letter: 'ג', image: 'camel' },
+                    { word: 'דב', letter: 'ד', image: 'bear' },
+                    { word: 'היפופוטם', letter: 'ה', image: 'hippo' },
+                    { word: 'וילון', letter: 'ו', image: 'curtain' },
+                    { word: 'זברה', letter: 'ז', image: 'zebra' },
+                    { word: 'חתול', letter: 'ח', image: 'cat' },
+                    { word: 'טיגריס', letter: 'ט', image: 'tiger' },
+                    { word: 'ינשוף', letter: 'י', image: 'owl' },
+                    { word: 'כלב', letter: 'כ', image: 'dog' },
+                    { word: 'לווייתן', letter: 'ל', image: 'whale' },
+                    { word: 'מקק', letter: 'מ', image: 'cockroach' },
+                    { word: 'נמר', letter: 'נ', image: 'leopard' },
+                    { word: 'סוס', letter: 'ס', image: 'horse' },
+                    { word: 'עטלף', letter: 'ע', image: 'bat' },
+                    { word: 'פיל', letter: 'פ', image: 'elephant' },
+                    { word: 'צבי', letter: 'צ', image: 'gazelle' },
+                    { word: 'קוף', letter: 'ק', image: 'monkey' },
+                    { word: 'ראם', letter: 'ר', image: 'oryx' },
+                    { word: 'שועל', letter: 'ש', image: 'fox' },
+                    { word: 'תנין', letter: 'ת', image: 'crocodile' },
+                ];
+
+                this.mode = new URLSearchParams(window.location.search).has('nikud') ? 'nikudSettings' : 'menu';
                 this.currentLetterIndex = 0;
                 this.gameState = { matches: 0, total: 0, answers: [] };
                 this.message = '';
@@ -140,6 +151,9 @@
                 this.canvas = null;
                 this.ctx = null;
                 this.currentGameLetters = [];
+                this.selectedNikudIndex = 0;
+                this.nikudRangeEnd = this.LETTERS.length - 1;
+                this.currentNikudLetterIndex = 0;
 
                 // Score tracking
                 this.loadScores();
@@ -187,44 +201,62 @@
                 this.render();
             }
 
-            startMatchGame() {
-                this.mode = 'match';
-
-                // Create array with each letter twice (animal and object)
-                let gameSequence = [];
-                for (let vocab of this.VOCABULARY) {
-                    gameSequence.push({ vocab, emojiIndex: 0 }); // animal
-                    gameSequence.push({ vocab, emojiIndex: 1 }); // object
-                }
-
-                // Shuffle but ensure no consecutive duplicates
-                gameSequence = this.shuffleNoDuplicates(gameSequence);
-
-                this.currentGameSequence = gameSequence;
-                this.currentGameIndex = 0;
-                this.gameState = { matches: 0, total: gameSequence.length, answers: [] };
-                this.messageEmoji = '';
-                this.earnedPoints = 0;
+            openNikudSettings() {
+                this.mode = 'nikudSettings';
                 this.render();
             }
 
-            shuffleNoDuplicates(array) {
-                let shuffled = [...array];
-                let hasConsecutiveDuplicate = true;
+            selectNikud(index) {
+                this.selectedNikudIndex = index;
+                this.render();
+            }
 
-                while (hasConsecutiveDuplicate) {
-                    shuffled = shuffled.sort(() => Math.random() - 0.5);
-                    hasConsecutiveDuplicate = false;
+            setNikudRange(value) {
+                this.nikudRangeEnd = value === 'all' ? this.LETTERS.length - 1 : Number(value);
+            }
 
-                    for (let i = 0; i < shuffled.length - 1; i++) {
-                        if (shuffled[i].vocab.letter === shuffled[i + 1].vocab.letter) {
-                            hasConsecutiveDuplicate = true;
-                            break;
-                        }
-                    }
+            startNikud() {
+                this.currentNikudLetterIndex = 0;
+                this.mode = 'nikudLearn';
+                this.render();
+            }
+
+            moveNikudLetter(step) {
+                const nextIndex = this.currentNikudLetterIndex + step;
+                if (nextIndex < 0) return;
+                if (nextIndex > this.nikudRangeEnd) {
+                    this.mode = 'nikudComplete';
+                } else {
+                    this.currentNikudLetterIndex = nextIndex;
                 }
+                this.render();
+            }
 
-                return shuffled;
+            startMatchGame() {
+                this.mode = 'match';
+                this.matchRunId = (this.matchRunId || 0) + 1;
+                this.currentGameSequence = this.shuffle([...this.MATCH_ITEMS]);
+                this.currentGameIndex = 0;
+                this.gameState = { matches: 0, total: this.currentGameSequence.length, answers: [] };
+                this.messageEmoji = '';
+                this.earnedPoints = 0;
+                this.matchLocked = false;
+                this.prepareMatchOptions();
+                this.render();
+            }
+
+            shuffle(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+                return array;
+            }
+
+            prepareMatchOptions() {
+                const correct = this.currentGameSequence[this.currentGameIndex].letter;
+                const others = this.shuffle(this.MATCH_ITEMS.map(item => item.letter).filter(letter => letter !== correct)).slice(0, 5);
+                this.currentMatchOptions = this.shuffle([correct, ...others]);
             }
 
             startSortGame() {
@@ -595,7 +627,8 @@
 
                             <div class="space-y-4">
                                 <button onclick="app.startLearning()" class="w-full bg-red-400 text-white text-2xl font-bold py-6 px-8 rounded-3xl hover:shadow-lg transform hover:scale-105 transition-all duration-200">📚 למד אותיות</button>
-                                <button onclick="app.startMatchGame()" class="w-full bg-blue-500 text-white text-2xl font-bold py-6 px-8 rounded-3xl hover:shadow-lg transform hover:scale-105 transition-all duration-200">🎮 משחק התאמה</button>
+                                <button onclick="app.openNikudSettings()" class="w-full bg-orange-500 text-white text-2xl font-bold py-6 px-8 rounded-3xl hover:shadow-lg transform hover:scale-105 transition-all duration-200">🔤 למד ניקוד</button>
+                                <button onclick="app.startMatchGame()" class="w-full bg-blue-500 text-white text-2xl font-bold py-6 px-8 rounded-3xl hover:shadow-lg transform hover:scale-105 transition-all duration-200">🎮 משחק התאמה: אות פותחת</button>
                                 <button onclick="app.startSortGame()" class="w-full bg-green-500 text-white text-2xl font-bold py-6 px-8 rounded-3xl hover:shadow-lg transform hover:scale-105 transition-all duration-200">🔢 סדר את האותיות</button>
                                 <button onclick="app.openMemoryLevels()" class="w-full bg-purple-500 text-white text-2xl font-bold py-6 px-8 rounded-3xl hover:shadow-lg transform hover:scale-105 transition-all duration-200">🧠 משחק זיכרון</button>
                                 <button onclick="app.startDrawing()" class="w-full bg-yellow-500 text-white text-2xl font-bold py-6 px-8 rounded-3xl hover:shadow-lg transform hover:scale-105 transition-all duration-200">✏️ צייר ותרגל</button>
@@ -643,6 +676,75 @@
                 `;
             }
 
+            renderNikudSettings() {
+                const markButtons = this.NIKUD_MARKS.map((nikud, index) => `
+                    <button type="button" role="radio" aria-checked="${this.selectedNikudIndex === index}" onclick="app.selectNikud(${index})"
+                        class="rounded-2xl border-4 p-3 text-center font-bold transition ${this.selectedNikudIndex === index ? 'border-orange-500 bg-orange-100' : 'border-gray-200 bg-white hover:border-orange-300'}">
+                        <span class="block text-5xl leading-tight" aria-hidden="true">ב${nikud.mark}</span>
+                        <span class="block text-lg">${nikud.name}</span>
+                    </button>
+                `).join('');
+                const rangeOptions = this.LETTERS.map((letter, index) => `
+                    <option value="${index}" ${this.nikudRangeEnd === index && index !== this.LETTERS.length - 1 ? 'selected' : ''}>עד ${letter.letter} (${letter.name})</option>
+                `).join('');
+
+                return `
+                    <main class="min-h-screen bg-gradient-to-br from-orange-300 via-pink-300 to-purple-300 flex items-center justify-center p-4">
+                        <div class="w-full max-w-lg bg-white rounded-3xl p-6 shadow-2xl">
+                            <button onclick="app.goToMenu()" class="text-lg font-bold text-blue-700 mb-4">→ חזרה למשחקים</button>
+                            <h1 class="text-3xl font-bold text-gray-800 text-center mb-2">🔤 לומדים ניקוד</h1>
+                            <p class="text-center text-gray-700 text-lg mb-5">בוחרים סימן ניקוד ומתרגלים אותו עם האותיות.</p>
+                            <h2 class="text-xl font-bold text-gray-800 mb-3">איזה ניקוד נלמד?</h2>
+                            <div role="radiogroup" aria-label="סימן הניקוד" class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">${markButtons}</div>
+                            <label for="nikudRange" class="block text-xl font-bold text-gray-800 mb-2">אילו אותיות נתרגל?</label>
+                            <select id="nikudRange" onchange="app.setNikudRange(this.value)" class="w-full rounded-2xl border-2 border-gray-400 bg-white p-4 text-xl mb-6">
+                                <option value="all" ${this.nikudRangeEnd === this.LETTERS.length - 1 ? 'selected' : ''}>כל האותיות (א–ת)</option>
+                                ${rangeOptions}
+                            </select>
+                            <button onclick="app.startNikud()" class="w-full bg-orange-500 text-white text-2xl font-bold py-4 rounded-2xl hover:bg-orange-600">מתחילים ללמוד ▶</button>
+                        </div>
+                    </main>
+                `;
+            }
+
+            renderNikudLearn() {
+                const letter = this.LETTERS[this.currentNikudLetterIndex];
+                const nikud = this.NIKUD_MARKS[this.selectedNikudIndex];
+                return `
+                    <main class="min-h-screen bg-gradient-to-br from-orange-300 via-pink-300 to-purple-300 flex items-center justify-center p-4">
+                        <div class="w-full max-w-md">
+                            <button onclick="app.openNikudSettings()" class="bg-white rounded-2xl px-5 py-3 text-lg font-bold text-blue-700 mb-4">→ החלפת ניקוד או טווח</button>
+                            <div class="bg-white rounded-3xl p-8 shadow-2xl text-center slide-in">
+                                <h1 class="text-3xl font-bold text-gray-800 mb-2">${nikud.name}</h1>
+                                <p class="text-gray-600 text-lg">אות ${this.currentNikudLetterIndex + 1} מתוך ${this.nikudRangeEnd + 1}</p>
+                                <div class="text-9xl font-bold text-blue-700 leading-relaxed my-4" aria-label="${letter.name} עם ${nikud.name}">${letter.letter}${nikud.mark}</div>
+                                <p class="text-2xl font-bold text-gray-800 mb-5">${letter.name} + ${nikud.name}</p>
+                                <button onclick="app.playSound('${letter.letter}${nikud.mark}')" aria-label="השמע ${letter.name} עם ${nikud.name}" class="bg-blue-500 text-white text-xl font-bold rounded-2xl px-6 py-4 mb-7 hover:bg-blue-600">🔊 השמע את הצירוף</button>
+                                <div class="flex gap-3">
+                                    <button onclick="app.moveNikudLetter(-1)" ${this.currentNikudLetterIndex === 0 ? 'disabled' : ''} class="flex-1 bg-gray-200 text-gray-900 text-xl font-bold py-4 rounded-2xl disabled:opacity-50">הקודמת</button>
+                                    <button onclick="app.moveNikudLetter(1)" class="flex-1 bg-orange-500 text-white text-xl font-bold py-4 rounded-2xl">${this.currentNikudLetterIndex === this.nikudRangeEnd ? 'סיום 🎉' : 'הבאה'}</button>
+                                </div>
+                            </div>
+                        </div>
+                    </main>
+                `;
+            }
+
+            renderNikudComplete() {
+                const nikud = this.NIKUD_MARKS[this.selectedNikudIndex];
+                return `
+                    <main class="min-h-screen bg-gradient-to-br from-orange-300 via-pink-300 to-purple-300 flex items-center justify-center p-4">
+                        <div class="w-full max-w-md bg-white rounded-3xl p-8 shadow-2xl text-center">
+                            <p class="text-7xl mb-4">🎉</p>
+                            <h1 class="text-3xl font-bold text-gray-800 mb-3">כל הכבוד!</h1>
+                            <p class="text-xl text-gray-700 mb-6">תרגלת ${nikud.name} עם ${this.nikudRangeEnd + 1} אותיות.</p>
+                            <button onclick="app.openNikudSettings()" class="w-full bg-orange-500 text-white text-xl font-bold py-4 rounded-2xl mb-3">לומדים ניקוד נוסף</button>
+                            <button onclick="app.goToMenu()" class="w-full bg-blue-100 text-blue-800 text-xl font-bold py-4 rounded-2xl">חזרה למשחקים</button>
+                        </div>
+                    </main>
+                `;
+            }
+
             getColorBg(colorClass) {
                 const colors = {
                     'kids-pink': '#FF6B9D',
@@ -669,72 +771,62 @@
 
             renderMatch() {
                 const currentItem = this.currentGameSequence[this.currentGameIndex];
-                const currentVocab = currentItem.vocab;
-                const currentEmoji = currentItem.emojiIndex === 0 ? currentVocab.animalEmoji : currentVocab.objectEmoji;
-                const currentWord = currentItem.emojiIndex === 0 ? currentVocab.animal : currentVocab.object;
-                const correctLetter = currentVocab.letter;
-
-                // Get all unique letters
-                const allLetters = [...new Set(this.VOCABULARY.map(v => v.letter))];
-
-                // Start with the correct letter
-                let buttonLetters = [correctLetter];
-
-                // Add 5 more random different letters (excluding the correct one)
-                const otherLetters = allLetters.filter(l => l !== correctLetter);
-                const randomOthers = otherLetters.sort(() => Math.random() - 0.5).slice(0, 5);
-                buttonLetters = buttonLetters.concat(randomOthers);
-
-                // Shuffle all button letters
-                buttonLetters = buttonLetters.sort(() => Math.random() - 0.5);
-
-                const buttons = buttonLetters.map((letter) => {
+                const buttons = this.currentMatchOptions.map((letter) => {
                     const letterData = this.LETTERS.find(l => l.letter === letter);
                     return `
-                        <button onclick="app.handleMatch('${letter}')" style="background: ${this.getColorBgLight(letterData.color)}; border: 4px solid ${this.getColorBg(letterData.color)};" class="text-6xl font-bold py-8 rounded-2xl hover:scale-110 transition-transform duration-200 transform hover:shadow-lg">${letter}</button>
+                        <button onclick="app.handleMatch('${letter}')" ${this.matchLocked ? 'disabled' : ''} aria-label="האות ${letter}" style="background: ${this.getColorBgLight(letterData.color)}; border: 4px solid ${this.getColorBg(letterData.color)};" class="text-6xl font-bold py-4 rounded-2xl hover:scale-105 transition-transform disabled:opacity-60">${letter}</button>
                     `;
                 }).join('');
 
                 return `
                     <div class="min-h-screen bg-gradient-to-br from-yellow-300 via-orange-300 to-pink-300 flex items-center justify-center p-4">
                         <div class="w-full max-w-md">
-                            <div class="text-center mb-6">
-                                <button onclick="app.goToMenu()" class="text-4xl bg-white rounded-full w-14 h-14 flex items-center justify-center hover:bg-gray-200 transition mb-4">✕</button>
+                            <div class="text-center mb-3">
+                                <button onclick="app.goToMenu()" aria-label="חזרה למשחקים" class="text-3xl bg-white rounded-full w-12 h-12 flex items-center justify-center hover:bg-gray-200 transition mb-2">✕</button>
                             </div>
 
                             <div class="bg-white rounded-2xl p-6 shadow-xl">
-                                <p class="text-center text-2xl font-bold text-gray-800 mb-4">בחר את האות הנכונה:</p>
-                                <div class="text-center mb-6">
-                                    <p class="text-9xl font-bold py-4 animate-bounce">${currentEmoji}</p>
+                                <p class="text-center text-lg text-gray-600 mb-2">מילה ${this.currentGameIndex + 1} מתוך ${this.gameState.total}</p>
+                                <h1 class="text-center text-2xl font-bold text-gray-800 mb-4">מה האות הראשונה במילה?</h1>
+                                <div class="text-center mb-5">
+                                    <img src="images/match/${currentItem.image}.webp" alt="${currentItem.word}" width="500" height="333" class="w-full h-48 sm:h-56 object-contain rounded-2xl bg-gray-50 mb-3" loading="eager">
                                     <div class="flex items-center justify-center gap-3">
-                                        <p class="text-4xl font-bold text-blue-600">${currentWord}</p>
-                                        <button onclick="app.playSound('${currentWord}')" class="text-3xl bg-blue-100 hover:bg-blue-200 border-2 border-blue-500 rounded-full w-12 h-12 flex items-center justify-center transition">🔊</button>
+                                        <p class="text-4xl font-bold text-blue-700">${currentItem.word}</p>
+                                        <button onclick="app.playSound('${currentItem.word}')" aria-label="השמע ${currentItem.word}" class="text-3xl bg-blue-100 hover:bg-blue-200 border-2 border-blue-500 rounded-full w-12 h-12 flex items-center justify-center transition">🔊</button>
                                     </div>
                                 </div>
 
-                                <div class="grid grid-cols-2 gap-3">
+                                <div class="grid grid-cols-3 gap-3">
                                     ${buttons}
                                 </div>
 
-                                ${this.messageEmoji ? `<p class="text-center text-5xl mt-6 font-bold bounce-scale">${this.messageEmoji}</p>` : ''}
+                                ${this.messageEmoji ? `<p role="status" class="text-center text-2xl mt-4 font-bold bounce-scale">${this.messageEmoji}</p>` : ''}
                             </div>
+                            <p class="text-center mt-3"><a href="image-credits.html" class="text-blue-900 underline">מקורות התמונות</a></p>
                         </div>
                     </div>
                 `;
             }
 
             handleMatch(letter) {
-                const correctLetter = this.currentGameSequence[this.currentGameIndex].vocab.letter;
+                if (this.mode !== 'match' || this.matchLocked) return;
+                const correctLetter = this.currentGameSequence[this.currentGameIndex].letter;
+                const round = this.currentGameIndex;
+                const runId = this.matchRunId;
 
                 if (letter === correctLetter) {
+                    this.matchLocked = true;
                     this.gameState.matches++;
                     this.earnedPoints += 10;
-                    this.messageEmoji = '✨';
+                    this.messageEmoji = 'נכון! ✨';
                     this.render();
                     setTimeout(() => {
+                        if (this.mode !== 'match' || this.currentGameIndex !== round || this.matchRunId !== runId) return;
                         this.messageEmoji = '';
                         if (this.gameState.matches < this.gameState.total) {
                             this.currentGameIndex++;
+                            this.matchLocked = false;
+                            this.prepareMatchOptions();
                             this.render();
                         } else {
                             // Game complete - award points and show celebration
@@ -744,9 +836,12 @@
                         }
                     }, 1000);
                 } else {
-                    this.messageEmoji = '🔄';
+                    this.matchLocked = true;
+                    this.messageEmoji = 'נסה שוב 🔄';
                     this.render();
                     setTimeout(() => {
+                        if (this.mode !== 'match' || this.currentGameIndex !== round || this.matchRunId !== runId) return;
+                        this.matchLocked = false;
                         this.messageEmoji = '';
                         this.render();
                     }, 800);
@@ -821,6 +916,12 @@
                     html = this.renderMenu();
                 } else if (this.mode === 'learn') {
                     html = this.renderLearn();
+                } else if (this.mode === 'nikudSettings') {
+                    html = this.renderNikudSettings();
+                } else if (this.mode === 'nikudLearn') {
+                    html = this.renderNikudLearn();
+                } else if (this.mode === 'nikudComplete') {
+                    html = this.renderNikudComplete();
                 } else if (this.mode === 'match') {
                     html = this.renderMatch();
                 } else if (this.mode === 'matchComplete') {
